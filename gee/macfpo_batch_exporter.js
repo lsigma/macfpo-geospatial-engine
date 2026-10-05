@@ -101,14 +101,12 @@ updateMap('MACFPO - Stock de Carbono');
 
 
 // ===============================================================
-// === SECCIÓN AÑADIDA: EXPORTACIÓN DE RÁSTERS Y ESTADÍSTICAS ===
+// === SECCIÓN CORREGIDA: EXPORTACIÓN DE RÁSTERS Y ESTADÍSTICAS ===
 // ===============================================================
 
 // 6.1 DEFINICIÓN DEL ÁREA (ROI) Y EXTRACCIÓN DE BANDAS
-// MENTORÍA: Nunca exportes sin definir 'region'. Si tienes el shapefile de la FPO, 
-// reemplaza ImageMacfpo.geometry() por el feature de la FPO (ej. ee.FeatureCollection("users/...").geometry())
 var roi = ImageMacfpo.geometry(); 
-var exportScale = 30; // MapBiomas nativo
+var exportScale = 30; // MapBiomas nativo (30 metros)
 
 var stockImg = ImageMacfpo.select('TC_' + yearVisua);
 var sdImg = ImageMacfpoSD.select('DS_' + yearVisua);
@@ -117,17 +115,17 @@ var sdImg = ImageMacfpoSD.select('DS_' + yearVisua);
 Export.image.toDrive({
   image: stockImg,
   description: 'Export_MACFPO_Stock_' + yearVisua,
-  folder: 'MACFPO_GEE_Exports',
+  folder: 'MACFPO - Stock de Carbono',
   region: roi,
   scale: exportScale,
-  maxPixels: 1e13,      // Vital para áreas del tamaño de la FPO
-  crs: 'EPSG:4326'      // Proyección estándar WGS84
+  maxPixels: 1e13,
+  crs: 'EPSG:4326'
 });
 
 Export.image.toDrive({
   image: sdImg,
   description: 'Export_MACFPO_SD_' + yearVisua,
-  folder: 'MACFPO_GEE_Exports',
+  folder: 'MACFPO - Stock de Carbono',
   region: roi,
   scale: exportScale,
   maxPixels: 1e13,
@@ -135,30 +133,39 @@ Export.image.toDrive({
 });
 
 // 6.3 CÁLCULO CIENTÍFICO DE ESTADÍSTICAS (CSV)
-// Para el Stock Total, convertimos Mg C/ha -> Mg C absolutos usando el área real del píxel.
+// Convertimos densidad (Mg C/ha) a masa absoluta (Mg C) multiplicando por el área real en ha
 var areaHa = ee.Image.pixelArea().divide(10000); 
 var carbonAbsoluto = stockImg.multiply(areaHa).rename('Carbono_Total_Mg');
 
-// Calculamos la suma total (Carbono absoluto) y la media (Densidad de Stock y Desviación)
-var statsReducers = ee.Reducer.mean().combine({reducer2: ee.Reducer.sum(), sharedInputs: false});
-
-var imagenParaStats = ee.Image([stockImg, sdImg, carbonAbsoluto]);
-
-var estadisticas = imagenParaStats.reduceRegion({
-  reducer: statsReducers,
+// REDUCCIÓN 1: Promedio espacial para variables de densidad (Stock e Incertidumbre)
+var densidadesImg = ee.Image([stockImg, sdImg]);
+var statsMedia = densidadesImg.reduceRegion({
+  reducer: ee.Reducer.mean(),
   geometry: roi,
   scale: exportScale,
   maxPixels: 1e13,
-  bestEffort: true // Evita errores de memoria si el área es colosal sin tileado
+  bestEffort: true
 });
 
-// Crear una tabla (FeatureCollection) a partir del diccionario de resultados
+// REDUCCIÓN 2: Suma espacial para la masa acumulada (Carbono Absoluto)
+var statsSuma = carbonAbsoluto.reduceRegion({
+  reducer: ee.Reducer.sum(),
+  geometry: roi,
+  scale: exportScale,
+  maxPixels: 1e13,
+  bestEffort: true
+});
+
+// COMBINACIÓN EN SERVIDOR: Unimos ambos diccionarios de resultados de GEE
+var estadisticas = statsMedia.combine(statsSuma);
+
+// Construir la FeatureCollection formateada para exportar
 var statsTable = ee.FeatureCollection([
   ee.Feature(null, {
     'Anio': yearVisua,
-    'Densidad_Media_Stock_MgC_ha': estadisticas.get('TC_' + yearVisua + '_mean'),
-    'Densidad_Media_Incertidumbre_MgC_ha': estadisticas.get('DS_' + yearVisua + '_mean'),
-    'Carbono_Total_Almacenado_Mg': estadisticas.get('Carbono_Total_Mg_sum')
+    'Densidad_Media_Stock_MgC_ha': estadisticas.get('TC_' + yearVisua),
+    'Densidad_Media_Incertidumbre_MgC_ha': estadisticas.get('DS_' + yearVisua),
+    'Carbono_Total_Almacenado_Mg': estadisticas.get('Carbono_Total_Mg')
   })
 ]);
 
@@ -166,6 +173,6 @@ var statsTable = ee.FeatureCollection([
 Export.table.toDrive({
   collection: statsTable,
   description: 'Estadisticas_MACFPO_' + yearVisua,
-  folder: 'MACFPO_GEE_Exports',
+  folder: 'MACFPO - Stock de Carbono',
   fileFormat: 'CSV'
 });
