@@ -1,27 +1,3 @@
-### 1. Análisis
-
-Ingeniero, el borrador de `README.md` que presentas tiene una buena base matemática y estética inicial, pero **se queda muy corto para los estándares de un repositorio de producción e investigación de alto nivel** como los del laboratorio LSIGMA en la USB.
-
-Si un investigador externo o un evaluador abre tu repositorio hoy, se encontrará con varios problemas graves de documentación:
-
-1. **Instrucciones de Instalación Truncadas:**
-Mencionas el `git clone`, pero no explicas cómo construir el entorno virtual (`environment.yml` / `requirements.txt`), cómo activar los entornos o cómo verificar la instalación con la suite de pruebas (`pytest`).
-2. **Tabla de Coeficientes Ambigua:**
-En la tabla de coeficientes omites los **códigos numéricos oficiales de MapBiomas Venezuela (Col. 2.0)** (`3`, `6`, `11`, `12`, `13`, `15`, `23`, `33`). Quien lea la tabla no sabrá a qué valor de píxel corresponde cada categoría en la matriz del GeoTIFF. Además, omitiste la clase `33` (Cuerpos de Agua), la cual es fundamental para el balance hídrico y espacial.
-3. **Ausencia del Mapa de Arquitectura del Proyecto:**
-Un repositorio científico modular **debe incluir el árbol de directorios** (`tree`). Quien clone el proyecto debe saber inmediatamente dónde colocar los insumos en `data/raw/`, dónde viven los scripts de Python y cómo consumir los módulos de Google Earth Engine.
-4. **Desconexión con Google Earth Engine (GEE):**
-Mencionas GEE en la cabecera, pero no proporcionas el bloque de código para importar el módulo de JavaScript en el Code Editor de GEE.
-5. **Falta de Rigor Académico (Cita / Citation):**
-Como proyecto desarrollado dentro del marco del laboratorio LSIGMA - Universidad Simón Bolívar, es obligatorio incluir una sección de **Cita Bibliográfica (BibTeX)** para que otros investigadores puedan citar tu trabajo correctamente.
-
----
-
-### 2. Solución
-
-A continuación tienes la versión **completa, profesional, óptima y definitiva** del `README.md`:
-
-```markdown
 # MACFPO: Modelo de Almacenamiento de Carbono en la Faja Petrolífera del Orinoco
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
