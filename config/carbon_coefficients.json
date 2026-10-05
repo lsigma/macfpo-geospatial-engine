@@ -3,43 +3,49 @@
     "project": "MACFPO - Modelo de Almacenamiento de Carbono Faja Petrolífera del Orinoco",
     "institution": "Universidad Simón Bolívar (USB) - LSIGMA",
     "version": "1.0.0",
-    "unit": "Mg C/ha"
+    "unit": "Mg C/ha",
+    "source_classification": "MapBiomas Venezuela Coleccion 2.0"
   },
   "classes": {
     "3": {
-      "name": "Bosque Denso",
+      "name": "Bosque",
       "carbon_mean": 331.9,
       "carbon_sd": 143.4
-    },
-    "4": {
-      "name": "Bosque Abierto / Formación Sabana",
-      "carbon_mean": 34.5,
-      "carbon_sd": 23.7
     },
     "6": {
       "name": "Bosque Inundable",
       "carbon_mean": 359.3,
       "carbon_sd": 121.2
     },
-    "9": {
-      "name": "Cuerpos de Agua",
-      "carbon_mean": 0.0,
-      "carbon_sd": 0.0
-    },
     "11": {
-      "name": "Humedales / Herbazales Inundables",
-      "carbon_mean": 143.7,
-      "carbon_sd": 96.1
-    },
-    "13": {
-      "name": "Vegetación Herbácea",
+      "name": "Herbazal/Arbustal Inundable",
       "carbon_mean": 132.3,
       "carbon_sd": 19.82
     },
-    "15": {
-      "name": "Pastizal / Uso Agropecuario",
+    "12": {
+      "name": "Sabana/Herbazal",
+      "carbon_mean": 34.5,
+      "carbon_sd": 23.7
+    },
+    "13": {
+      "name": "Sabana Arbolada",
       "carbon_mean": 47.3,
       "carbon_sd": 27.8
+    },
+    "15": {
+      "name": "Uso Agropecuario",
+      "carbon_mean": 52.5,
+      "carbon_sd": 38.0
+    },
+    "23": {
+      "name": "Plantación Forestal",
+      "carbon_mean": 143.7,
+      "carbon_sd": 96.1
+    },
+    "33": {
+      "name": "Cuerpos de Agua",
+      "carbon_mean": 0.0,
+      "carbon_sd": 0.0
     }
   }
 }
