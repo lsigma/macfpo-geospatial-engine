@@ -5,11 +5,11 @@
  * ============================================================================
  * 
  * Este módulo realiza la reclasificación espacial de capas de uso y
- * cobertura vegetal (MapBiomas Venezuela Col. 2.0) a Stock de Carbono
+ * cobertura vegetal (MapBiomas Venezuela Col. 2.0 / 3.0) a Stock de Carbono
  * e Incertidumbre (Desviación Estándar).
  */
 
-// Parametrización unificada del modelo MACFPO (MapBiomas Venezuela Col. 2.0)
+// Parametrización unificada del modelo MACFPO (MapBiomas Venezuela Col. 2.0 / 3.0)
 var config = {
   fromCodes:   [3,     6,     11,    12,   13,   15,   23,    33],
   carbonMeans: [331.9, 359.3, 132.3, 34.5, 47.3, 52.5, 143.7, 0.0],
@@ -19,12 +19,13 @@ var config = {
 /**
  * Reclasifica una imagen de MapBiomas a una imagen Multibanda con Stock e Incertidumbre.
  * Mantiene la máscara original para no contaminar estadísticas zonales.
+ * Retorna un objeto ee.Image estricto blindado contra la degradación de tipos (Type Erasure).
  * 
  * @param {ee.Image} mapbiomasImage - Capa de clasificación de MapBiomas
  * @returns {ee.Image} Capa multibanda: ['carbon_stock', 'carbon_sd'] en Mg C/ha
  */
 exports.classifyCarbonAll = function(mapbiomasImage) {
-  // Reclasificación a Stock (sin defaultValue para no llenar de ceros zonas NoData)
+  // Reclasificación a Stock
   var stock = mapbiomasImage.remap({
     from: config.fromCodes,
     to: config.carbonMeans
@@ -36,12 +37,12 @@ exports.classifyCarbonAll = function(mapbiomasImage) {
     to: config.carbonSDs
   }).rename('carbon_sd');
 
-  // Empaquetado multibanda y preservación de metadatos temporales
-  var carbonImage = ee.Image.cat([stock, sd])
-    .cast({'carbon_stock': 'float', 'carbon_sd': 'float'})
-    .copyProperties(mapbiomasImage, ['system:time_start', 'year']);
+  // Empaquetado multibanda y conversión explícita de tipos de datos a float (Float32)
+  var combined = ee.Image.cat([stock, sd])
+    .cast({'carbon_stock': 'float', 'carbon_sd': 'float'});
 
-  return carbonImage;
+  // Casteo explícito a ee.Image para prevenir pérdida de métodos al copiar propiedades
+  return ee.Image(combined.copyProperties(mapbiomasImage, ['system:time_start', 'year']));
 };
 
 /**
