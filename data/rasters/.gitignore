@@ -1,5 +1,13 @@
-# Ignorar todos los binarios raster dentro de esta carpeta
+# Archivos binarios ráster pesados
 *.tif
 *.tiff
 *.nc
 *.tfw
+*.hdr
+
+# Pirámides, estadísticas y metadatos generados por QGIS / GDAL / ArcGIS / Rasterio
+*.ovr
+*.aux.xml
+*.xml
+*.vat.dbf
+*.qml
