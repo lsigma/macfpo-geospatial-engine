@@ -129,18 +129,25 @@ python scripts_python/raster_processor.py
 Puedes importar el módulo de cálculo directamente en el **GEE Code Editor**:
 
 ```javascript
-// Importar el módulo MACFPO desde el repositorio de la USB
+// 1. Importar el módulo MACFPO desde el repositorio oficial
 var carbonCalc = require('users/lsigma_usb/macfpo:modules/carbon_calculator.js');
 
-// Cargar imagen de MapBiomas Venezuela 2023
-var mapbiomas2023 = ee.Image("projects/mapbiomas-venezuela/public/collection2/mapbiomas_venezuela_2023");
+// 2. Cargar el Asset oficial de MapBiomas Venezuela (Colección 3)
+var mapbiomasRaisg = ee.Image("projects/mapbiomas-public/assets/venezuela/lulc/collection3/mapbiomas_venezuela_collection3_coverage_v1");
 
-// Generar imagen multibanda [carbon_stock, carbon_sd]
-var macfpoResult = carbonCalc.classifyCarbonAll(mapbiomas2023);
+// 3. Extraer la banda de clasificación para el año de interés (ej. 2022)
+var mapbiomas2022 = mapbiomasRaisg.select('classification_2022').rename('classification');
 
-// Visualización en el mapa
-Map.centerObject(macfpoResult, 8);
-Map.addLayer(macfpoResult.select('carbon_stock'), {min: 0, max: 360, palette: ['#ffffcc','#a1dab4','#41b6c4','#2c7fb8','#253494']}, 'Stock Carbono (Mg C/ha)');
+// 4. Generar imagen multibanda reclasificada: ['carbon_stock', 'carbon_sd']
+var macfpoResult = carbonCalc.classifyCarbonAll(mapbiomas2022);
+
+// 5. Visualización interactiva en el mapa
+Map.setCenter(-63.5, 8.5, 7); // Centrado en la Faja Petrolífera del Orinoco
+Map.addLayer(
+  macfpoResult.select('carbon_stock'), 
+  {min: 0, max: 360, palette: ['#ffffcc','#a1dab4','#41b6c4','#2c7fb8','#253494']}, 
+  'Stock Carbono 2022 (Mg C/ha)'
+);
 
 ```
 
