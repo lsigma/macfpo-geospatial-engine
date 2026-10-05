@@ -1,0 +1,60 @@
+{
+  "metadata": {
+    "model": "MACFPO",
+    "region": "Faja Petrolífera del Orinoco",
+    "area_km2": 64157.87,
+    "time_series": "1985-2023",
+    "unit": "Mg C/ha"
+  },
+  "classes": {
+    "3": {
+      "name": "Bosque",
+      "carbon_mean": 331.9,
+      "carbon_sd": 143.4,
+      "cv_percent": 37.5,
+      "n_samples": 7
+    },
+    "4": {
+      "name": "Sabana/Herbazal",
+      "carbon_mean": 34.5,
+      "carbon_sd": 23.7,
+      "cv_percent": 6.0,
+      "n_samples": 10
+    },
+    "6": {
+      "name": "Bosque Inundable",
+      "carbon_mean": 359.3,
+      "carbon_sd": 121.2,
+      "cv_percent": 24.7,
+      "n_samples": 3
+    },
+    "9": {
+      "name": "Plantación Forestal",
+      "carbon_mean": 143.7,
+      "carbon_sd": 96.1,
+      "cv_percent": 77.2,
+      "n_samples": 3
+    },
+    "11": {
+      "name": "Herbazal/Arbustal Inundable",
+      "carbon_mean": 132.3,
+      "carbon_sd": 19.82,
+      "cv_percent": 3,4,
+      "n_samples": 4
+    },
+    "13": {
+      "name": "Sabana Arbolada",
+      "carbon_mean": 47.3,
+      "carbon_sd": 27.8,
+      "cv_percent": 35.5,
+      "n_samples": 4
+    },
+    "15": {
+      "name": "Uso Agropecuario",
+      "carbon_mean": 52.5,
+      "carbon_sd": 38.0,
+      "cv_percent": 70.3,
+      "n_samples": 11
+    }
+  }
+}
