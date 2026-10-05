@@ -39,7 +39,8 @@ $$\sigma_{\text{total}} = \sqrt{\sigma_{\text{biomasa}}^2 + \sigma_{\text{COS}}^
 ### 1. Clonar el repositorio
 ```bash
 git clone [https://github.com/lsigma/macfpo-geospatial-engine.git](https://github.com/lsigma/macfpo-geospatial-engine.git)
-cd macfpo-geospatial-engine```
+cd macfpo-geospatial-engine
+```
 
 ## 📦 Descarga de Datos Ráster (GeoTIFF)
 
