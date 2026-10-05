@@ -2,7 +2,7 @@
 
 Los productos ráster generados a 30 m de resolución espacial están alojados en almacenamiento remoto abierto para mantener un repositorio liviano.
 
-## 1. Inventario de Productos
+## Inventario de Productos
 
 ### MACFPO - Stock de Carbono (2010)
 - **Nombre de archivo:** `Export_MACFPO_Stock_2010.tif`
