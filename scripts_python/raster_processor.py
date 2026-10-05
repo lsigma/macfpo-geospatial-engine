@@ -18,6 +18,10 @@ logging.basicConfig(
     format="%(asctime)s - [%(levelname)s] - %(message)s"
 )
 
+# Constante científica estándar para ausencia de datos en rásteres float32
+NODATA_VALUE = -9999.0
+
+
 def process_carbon_raster(
     input_raster_path: str,
     output_stock_path: str,
@@ -49,63 +53,77 @@ def process_carbon_raster(
     sd_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Cargar coeficientes desde el JSON
-    with open(cfg_path, 'r', encoding='utf-8') as f:
+    with open(cfg_path, "r", encoding="utf-8") as f:
         cfg = json.load(f)
 
-    # Construir vectores de mapeo directo para NumPy (Reclasificación ultrarrápida O(1))
-    class_keys = [int(k) for k in cfg['classes'].keys()]
+    # Determinar el código máximo de clase para dimensiones de la lookup table
+    class_keys = [int(k) for k in cfg["classes"].keys()]
     max_code = max(class_keys) + 1
 
-    lookup_mean = np.zeros(max_code, dtype=np.float32)
-    lookup_sd = np.zeros(max_code, dtype=np.float32)
+    # Inicializar vectores de mapeo con NODATA_VALUE (-9999.0)
+    lookup_mean = np.full(max_code, NODATA_VALUE, dtype=np.float32)
+    lookup_sd = np.full(max_code, NODATA_VALUE, dtype=np.float32)
 
-    for code_str, values in cfg['classes'].items():
+    # Poblar únicamente las clases definidas formalmente
+    for code_str, values in cfg["classes"].items():
         code = int(code_str)
-        lookup_mean[code] = values['carbon_mean']
-        lookup_sd[code] = values['carbon_sd']
+        lookup_mean[code] = values["carbon_mean"]
+        lookup_sd[code] = values["carbon_sd"]
 
-    logging.info("Iniciando procesamiento de bloques ráster...")
+    logging.info("Iniciando procesamiento por bloques de memoria...")
 
     with rasterio.open(input_path) as src:
+        # Extraer el valor NoData original de la capa de entrada
+        input_nodata = src.nodata
+
+        # Construir perfil para GeoTIFFs optimizados (Cloud Optimized GeoTIFF - COG Ready)
         profile = src.profile.copy()
         profile.update(
             dtype=rasterio.float32,
-            nodata=0.0,
-            compress='lzw',
+            nodata=NODATA_VALUE,
+            compress="lzw",
             tiled=True,
             blockxsize=512,
             blockysize=512
         )
 
-        with rasterio.open(stock_path, 'w', **profile) as dst_stock, \
-             rasterio.open(sd_path, 'w', **profile) as dst_sd:
+        with rasterio.open(stock_path, "w", **profile) as dst_stock, \
+             rasterio.open(sd_path, "w", **profile) as dst_sd:
 
-            # Procesamiento por bloques para mantener bajo consumo de memoria RAM
-            for ij, window in src.block_windows(1):
+            total_blocks = len(list(src.block_windows(1)))
+            logging.info(f"Procesando {total_blocks} bloques de 512x512 píxeles...")
+
+            for block_idx, (ij, window) in enumerate(src.block_windows(1), start=1):
                 data = src.read(1, window=window)
 
-                # Control de seguridad contra píxeles fuera de rango o NoData no mapeados
-                valid_mask = (data >= 0) & (data < max_code)
-                safe_data = np.where(valid_mask, data, 0)
+                # Mascarado de seguridad: verificar rango de índices y NoData de entrada
+                valid_indices_mask = (data >= 0) & (data < max_code)
+                if input_nodata is not None:
+                    valid_indices_mask &= (data != input_nodata)
 
-                # Reclasificación vectorizada por indexación de arreglo
+                # Mapear datos seguros a índice 0 temporalmente para evitar IndexError
+                safe_data = np.where(valid_indices_mask, data, 0)
+
+                # Reclasificación vectorizada O(1)
                 stock_window = lookup_mean[safe_data]
                 sd_window = lookup_sd[safe_data]
 
-                # Asignar 0.0 a los valores no válidos
-                stock_window[~valid_mask] = 0.0
-                sd_window[~valid_mask] = 0.0
+                # Aplicar NODATA_VALUE explícito a todo píxel fuera de definición
+                stock_window[~valid_indices_mask] = NODATA_VALUE
+                sd_window[~valid_indices_mask] = NODATA_VALUE
 
-                # Escritura en disco
+                # Escritura en disco por bloque
                 dst_stock.write(stock_window.astype(np.float32), 1, window=window)
                 dst_sd.write(sd_window.astype(np.float32), 1, window=window)
+
+                if block_idx % 20 == 0 or block_idx == total_blocks:
+                    logging.info(f"Progreso: {block_idx}/{total_blocks} bloques procesados.")
 
     logging.info(f"Ráster de Stock generado exitosamente: {stock_path}")
     logging.info(f"Ráster de Incertidumbre generado exitosamente: {sd_path}")
 
 
 if __name__ == "__main__":
-    # Ejecución de prueba por defecto
     process_carbon_raster(
         input_raster_path="data/raw/mapbiomas_fpo_2023.tif",
         output_stock_path="data/processed/macfpo_stock_2023.tif",
