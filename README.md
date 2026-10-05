@@ -157,21 +157,6 @@ Los productos ráster generados a $30\text{ m}$ de resolución espacial están a
 
 ---
 
-## 🧪 Pruebas Unitarias y Control de Calidad
-
-El proyecto incluye un conjunto de pruebas automatizadas con `pytest` para verificar la integridad del esquema JSON y la precisión del motor de procesamiento ráster:
-
-```bash
-# Ejecutar la suite completa de pruebas
-pytest -v
-
-# Validar formato de código según estándares PEP8
-flake8 scripts_python/ tests/
-
-```
-
----
-
 ## 📖 Cita Requerida / How to Cite
 
 Si utilizas el modelo MACFPO, sus coeficientes o las capas GeoTIFF derivadas en tu investigación, por favor cita esta obra de la siguiente manera:
