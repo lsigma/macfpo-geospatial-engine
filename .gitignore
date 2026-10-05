@@ -16,11 +16,18 @@
 *.laz
 *.dem
 
-# Tablas pesadas o bases de datos espaciales locales
+# Tablas pesadas, vectorial ESRI Legacy y bases de datos espaciales
 *.gpkg
 *.sqlite
 *.mdf
 *.ldf
+*.shp
+*.shx
+*.dbf
+*.sbn
+*.sbx
+*.fgb
+*.geojson
 
 # Archivos auxiliares, índices y pirámides de GDAL/QGIS/ArcGIS
 *.aux.xml
@@ -29,6 +36,7 @@
 *.xml
 *.prj.xml
 *.cpg
+*.qml
 
 # Archivos de bloqueo (Lockfiles) de software SIG
 *.qgz~
@@ -40,7 +48,6 @@
 # ===============================================================
 # 2. ESTRUCTURA DE DIRECTORIOS DEL PROYECTO (DATA PIPELINE)
 # ===============================================================
-# Ignorar datos crudos e intermedios no versionables
 data/raw/
 data/interim/
 data/cache/
@@ -48,17 +55,16 @@ data/cache/
 # Permitir explícitamente tablas CSV procesadas para GitHub
 !data/processed/
 !data/processed/*.csv
+!data/tables/*.csv
+!data/rasters/README.md
 
 # ===============================================================
 # 3. ENTORNO PYTHON, PAQUETES Y COMPILADOS
 # ===============================================================
-# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
 *$py.class
 *.so
-
-# C extensions
 .Python
 build/
 develop-eggs/
@@ -78,7 +84,7 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# Virtual Environments (Entornos Virtuales)
+# Virtual Environments
 .env
 .envrc
 .venv
@@ -88,59 +94,24 @@ ENV/
 env.bak/
 venv.bak/
 
-# Package managers / Lock files de dependencias pesadas
-.pdm-python
-.pdm-build/
-.pixi/*
-!.pixi/config.toml
-__pypackages__/
-
-# Unit test / coverage reports / Type checkers
+# Testing y Linter Cache
 htmlcov/
 .tox/
 .nox/
 .coverage
 .coverage.*
 .cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py.cover
-*.lcov
-.hypothesis/
 .pytest_cache/
-cover/
 .mypy_cache/
-.dmypy.json
-dmypy.json
-.pyre/
-.pytype/
 .ruff_cache/
-
-# Jupyter Notebook Checkpoints
 .ipynb_checkpoints
 
 # ===============================================================
-# 4. CONFIGURACIONES DE EDITORES, IDEs Y SISTEMA OPERATIVO
+# 4. CONFIGURACIONES DE EDITORES Y SISTEMA OPERATIVO
 # ===============================================================
-# Archivos del sistema operativo
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
-
-# Visual Studio Code & PyCharm
 .vscode/
 .idea/
-.spyderproject
-.spyproject
-.ropeproject
-tempCodeRunnerFile.py
-
-# Credenciales y variables de entorno locales
 .env
 .streamlit/secrets.toml
-.pypirc
