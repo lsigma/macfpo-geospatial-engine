@@ -40,3 +40,14 @@ $$\sigma_{\text{total}} = \sqrt{\sigma_{\text{biomasa}}^2 + \sigma_{\text{COS}}^
 ```bash
 git clone [https://github.com/lsigma/macfpo-geospatial-engine.git](https://github.com/lsigma/macfpo-geospatial-engine.git)
 cd macfpo-geospatial-engine
+
+## 📦 Descarga de Datos Ráster (GeoTIFF)
+
+Debido a los límites de almacenamiento binario en Git, los rásters resultantes a 30m de resolución espacial están alojados en almacenamiento remoto abierto.
+
+| Producto Ráster | Año | Resolución | Formato | Enlace de Descarga |
+| :--- | :---: | :---: | :---: | :---: |
+| **MACFPO - Stock de Carbono** | 2010 | 30m | GeoTIFF (EPSG:4326) | [<img src="https://img.shields.io/badge/Google_Drive-Descargar-4285F4?style=for-the-badge&logo=googledrive&logoColor=white"/>](https://drive.google.com/uc?export=download&id=1ZHDqCDlJxeWaNJY8d9xS2H-GkezURWyE) |
+| **MACFPO - Desviación Estándar** | 2010 | 30m | GeoTIFF (EPSG:4326) | [<img src="https://img.shields.io/badge/Google_Drive-Descargar-4285F4?style=for-the-badge&logo=googledrive&logoColor=white"/>](https://drive.google.com/uc?export=download&id=13IPwOZIJB1Qoq-PvOImqi86gFm8a5vXS) |
+
+> **Nota:** La URL de descarga directa utiliza el parámetro `export=download&id=FILE_ID`.
