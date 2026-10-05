@@ -1,0 +1,5 @@
+# Ignorar todos los binarios raster dentro de esta carpeta
+*.tif
+*.tiff
+*.nc
+*.tfw
