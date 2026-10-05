@@ -1,12 +1,12 @@
 // ===============================================================
-// 1. Descripción
-// En este repositorio electrónico se encuentran disponibles para su inspección: (i) el mapa del MACFPO - Stock de Carbono en Mg C/ha (Carbono Total), 
-// (ii) el mapa MACFPO Desviación Estándar en Mg C/ha (Incertidumbre), y (iii) el modelo de referencia global del UNEP-WCMC - Stock de Carbono en 
-// Mg C/ha (Soto-Navarro et al., 2020) utilizado para la validación cruzada.
-// 
-// Utilizando la herramienta INSPECTOR haga clic en el mapa para inspeccionar los valores de cada pixel en los mapas. 
+// 1. DESCRIPCIÓN DEL PROYECTO
+// En este repositorio electrónico se encuentran disponibles para su inspección:
+// (i) El mapa del MACFPO - Stock de Carbono en Mg C/ha (Carbono Total).
+// (ii) El mapa MACFPO Desviación Estándar en Mg C/ha (Incertidumbre).
+// (iii) El modelo de referencia global del UNEP-WCMC - Stock de Carbono en Mg C/ha (Soto-Navarro et al., 2020) utilizado para la validación cruzada.
+//
+// Utilizando la herramienta INSPECTOR haga clic en el mapa para inspeccionar los valores de cada píxel.
 // ===============================================================
-
 
 // ===============================================================
 // 2. CARGA DE DATOS Y CONFIGURACIÓN
@@ -15,35 +15,29 @@ var ImageMacfpo = ee.Image('projects/lsigma2025/assets/MACFPO');
 var ImageMacfpoSD = ee.Image('projects/lsigma2025/assets/MACFPO_SD');
 var ImageBiomass = ee.Image('projects/ee-lauraugas/assets/Biomass_carb');
 
-// ===============================================================
-// Cambie el año para visualizar la serie temporal (1985-2023)
-// ===============================================================
-
+// Año por defecto para la visualización inicial en el visor (1985-2023)
 var yearVisua = 2010;
 
-// Paleta compartida (8 niveles)
+// Paleta cromática compartida (8 niveles perceptualmente graduados)
 var sharedPalette = ['0D118B', '21438B', '1F84A4', '3CBF97', '45B96F', '67F034', 'BFF266', 'FFFF95'];
 
-// Rangos de Leyenda
+// Rangos e intervalos para las leyendas de interfaz
 var stockLabels = ['0', '1 - 34.5', '34.6 - 47.3', '47.4 - 52.5', '52.6 - 132.3', '132.4 - 143.7', '143.8 - 331.9', '332 - 359.3'];
 var biomassLabels = ['0', '1 - 34.5', '34.6 - 47.3', '47.4 - 52.5', '52.6 - 132.3', '132.4 - 143.7', '143.8 - 331.9', '332 - 359.3'];
 var sdLabels = ['0', '37.5', '75', '112.5', '150+'];
 
 // ===============================================================
-// 3. CREACIÓN DE CAPAS
+// 3. CREACIÓN Y ORDENAMIENTO DE CAPAS EN EL MAPA
 // ===============================================================
-
-// Definimos las capas individualmente
 var layerStock = ui.Map.Layer(ImageMacfpo.select('TC_' + yearVisua), {min: 0, max: 359.3, palette: sharedPalette}, 'MACFPO - Stock de Carbono', true);
 var layerSD = ui.Map.Layer(ImageMacfpoSD.select('DS_' + yearVisua), {min: 0, max: 150, palette: ['white', 'blue']}, 'MACFPO Desviación Estándar', false);
 var layerBiomass = ui.Map.Layer(ImageBiomass, {min: 0, max: 332.8, palette: sharedPalette}, 'UNEP-WCMC - Stock de Carbono', false);
 
-// ORDEN DE CAPAS: Para que Stock salga primero en la lista, debe ir al FINAL del array.
-// El orden en la lista será: 1. Stock, 2. Desviación, 3. UNEP-WCMC
+// Orden jerárquico de renderizado (El último elemento del array queda en la cima visual)
 Map.layers().reset([layerBiomass, layerSD, layerStock]);
 
 // ===============================================================
-// 4. COMPONENTES DE LA INTERFAZ (UI)
+// 4. COMPONENTES DE LA INTERFAZ DE USUARIO (UI)
 // ===============================================================
 var mainPanel = ui.Panel({
   style: {position: 'bottom-left', padding: '8px 15px', width: '230px'}
@@ -68,10 +62,9 @@ function makeLegend(palette, labels) {
 }
 
 // ===============================================================
-// 5. FUNCIÓN DE CAMBIO DINÁMICO
+// 5. CONTROLADOR DINÁMICO DE CAPAS
 // ===============================================================
 function updateMap(selection) {
-  // Sincronizar visibilidad de capas
   layerStock.setShown(selection == 'MACFPO - Stock de Carbono');
   layerSD.setShown(selection == 'MACFPO Desviación Estándar');
   layerBiomass.setShown(selection == 'UNEP-WCMC - Stock de Carbono');
@@ -99,21 +92,17 @@ var select = ui.Select({
 Map.add(select);
 updateMap('MACFPO - Stock de Carbono');
 
-
 // ===============================================================
-// === SECCIÓN CORREGIDA: EXPORTACIÓN DE RÁSTERS Y ESTADÍSTICAS ===
+// 6. PIPELINE DE EXPORTACIÓN (RÁSTERS Y SERIE TEMPORAL CSV SANITIZADA)
 // ===============================================================
 
-// 6.1 DEFINICIÓN DEL ÁREA (ROI) Y EXTRACCIÓN DE BANDAS
+// 6.1 Parámetros de Extracción
 var roi = ImageMacfpo.geometry(); 
-var exportScale = 30; // MapBiomas nativo (30 metros)
+var exportScale = 30; // Resolución espacial nativa (30m - MapBiomas)
 
-var stockImg = ImageMacfpo.select('TC_' + yearVisua);
-var sdImg = ImageMacfpoSD.select('DS_' + yearVisua);
-
-// 6.2 EXPORTAR RÁSTERS (GeoTIFF) AL GOOGLE DRIVE
+// 6.2 Exportación de GeoTIFFs individuales para el año seleccionado
 Export.image.toDrive({
-  image: stockImg,
+  image: ImageMacfpo.select('TC_' + yearVisua),
   description: 'Export_MACFPO_Stock_' + yearVisua,
   folder: 'MACFPO - Stock de Carbono',
   region: roi,
@@ -123,7 +112,7 @@ Export.image.toDrive({
 });
 
 Export.image.toDrive({
-  image: sdImg,
+  image: ImageMacfpoSD.select('DS_' + yearVisua),
   description: 'Export_MACFPO_SD_' + yearVisua,
   folder: 'MACFPO - Stock de Carbono',
   region: roi,
@@ -132,47 +121,64 @@ Export.image.toDrive({
   crs: 'EPSG:4326'
 });
 
-// 6.3 CÁLCULO CIENTÍFICO DE ESTADÍSTICAS (CSV)
-// Convertimos densidad (Mg C/ha) a masa absoluta (Mg C) multiplicando por el área real en ha
-var areaHa = ee.Image.pixelArea().divide(10000); 
-var carbonAbsoluto = stockImg.multiply(areaHa).rename('Carbono_Total_Mg');
+// 6.3 Mapeo Espacio-Temporal en Servidor Distribuido (1985-2023)
+var startYear = 1985;
+var endYear = 2023;
+var yearList = ee.List.sequence(startYear, endYear);
 
-// REDUCCIÓN 1: Promedio espacial para variables de densidad (Stock e Incertidumbre)
-var densidadesImg = ee.Image([stockImg, sdImg]);
-var statsMedia = densidadesImg.reduceRegion({
-  reducer: ee.Reducer.mean(),
-  geometry: roi,
-  scale: exportScale,
-  maxPixels: 1e13,
-  bestEffort: true
+var timeSeriesFeatures = yearList.map(function(year) {
+  var yNum = ee.Number(year).toInt(); // Cast explícito a entero
+  var yStr = yNum.format('%d');
+  
+  var bandStockName = ee.String('TC_').cat(yStr);
+  var bandSDName = ee.String('DS_').cat(yStr);
+  
+  var stockImgYear = ImageMacfpo.select([bandStockName]).rename('Stock');
+  var sdImgYear = ImageMacfpoSD.select([bandSDName]).rename('SD');
+  
+  // Cálculo de masa absoluta acumulada: (Mg C / ha) * (área del píxel en ha)
+  var areaHa = ee.Image.pixelArea().divide(10000); 
+  var carbonAbsolutoYear = stockImgYear.multiply(areaHa).rename('Carbono_Total');
+  
+  // Consolidación multibanda para REDUCCIÓN ÚNICA (Optimizó la ejecución en la nube)
+  var multibandImage = stockImgYear.addBands(sdImgYear).addBands(carbonAbsolutoYear);
+  
+  // Reducción Espacial Combinada: Promedio para Densidad/SD y Suma para Masa Total
+  var stats = multibandImage.reduceRegion({
+    reducer: ee.Reducer.mean().forEach(['Stock', 'SD'])
+              .combine({
+                reducer2: ee.Reducer.sum().forEach(['Carbono_Total']),
+                sharedInputs: false
+              }),
+    geometry: roi,
+    scale: exportScale,
+    maxPixels: 1e13,
+    bestEffort: true,
+    tileScale: 4 // Subdivide el procesamiento en teselas para evitar desbordamiento de RAM
+  });
+  
+  // Construcción del Feature aislado de geometría
+  return ee.Feature(null, {
+    'Anio': yNum,
+    'Densidad_Media_Stock_MgC_ha': stats.get('Stock'),
+    'Densidad_Media_Incertidumbre_MgC_ha': stats.get('SD'),
+    'Carbono_Total_Almacenado_Mg': stats.get('Carbono_Total')
+  });
 });
 
-// REDUCCIÓN 2: Suma espacial para la masa acumulada (Carbono Absoluto)
-var statsSuma = carbonAbsoluto.reduceRegion({
-  reducer: ee.Reducer.sum(),
-  geometry: roi,
-  scale: exportScale,
-  maxPixels: 1e13,
-  bestEffort: true
-});
+var timeSeriesTable = ee.FeatureCollection(timeSeriesFeatures);
 
-// COMBINACIÓN EN SERVIDOR: Unimos ambos diccionarios de resultados de GEE
-var estadisticas = statsMedia.combine(statsSuma);
-
-// Construir la FeatureCollection formateada para exportar
-var statsTable = ee.FeatureCollection([
-  ee.Feature(null, {
-    'Anio': yearVisua,
-    'Densidad_Media_Stock_MgC_ha': estadisticas.get('TC_' + yearVisua),
-    'Densidad_Media_Incertidumbre_MgC_ha': estadisticas.get('DS_' + yearVisua),
-    'Carbono_Total_Almacenado_Mg': estadisticas.get('Carbono_Total_Mg')
-  })
-]);
-
-// 6.4 EXPORTAR TABLA DE ESTADÍSTICAS (CSV)
+// 6.4 Exportación de Tabla Sanitizada a Google Drive
 Export.table.toDrive({
-  collection: statsTable,
-  description: 'Estadisticas_MACFPO_' + yearVisua,
+  collection: timeSeriesTable,
+  description: 'MACFPO_Serie_Temporal_Estadisticas_1985_2023',
   folder: 'MACFPO - Stock de Carbono',
-  fileFormat: 'CSV'
+  fileFormat: 'CSV',
+  // SELECTORS: Filtra .geo y system:index y fija el orden de columnas
+  selectors: [
+    'Anio',
+    'Densidad_Media_Stock_MgC_ha',
+    'Densidad_Media_Incertidumbre_MgC_ha',
+    'Carbono_Total_Almacenado_Mg'
+  ]
 });
