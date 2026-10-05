@@ -54,30 +54,29 @@ Donde $\sigma_{\text{total}}$ representa la Desviación Estándar combinada asig
 
 ```text
 macfpo-geospatial-engine/
+├── .github/
+│   └── workflows/
+│       └── ci_validation.yml          # Pipeline de Integración Continua (CI)
 ├── config/
-│   ├── carbon_coefficients.json     # Coeficientes y metadatos del modelo
-│   └── schema_config.json          # Esquema de validación JSONSchema
+│   └── carbon_coefficients.json     # Coeficientes y metadatos del modelo
 ├── data/
-│   ├── raw/                        # Coberturas brutas (Ignorado en Git)
-│   ├── interim/                    # Capas temporales de procesamiento
-│   ├── processed/                  # Productos finales calculados
-│   └── rasters/
-│       └── README.md               # Manifiesto y links de descarga de GeoTIFFs
+│   ├── rasters/
+│   │   ├── .gitignore               # Exclusión de binarios GeoTIFF locales
+│   │   └── README.md                # Manifiesto y enlaces de descarga de rásteres
+│   └── tables/
+│       └── MACFPO_Serie_Temporal_Estadisticas.csv  # Series temporales consolidadas
 ├── gee/
 │   ├── modules/
 │   │   └── carbon_calculator.js    # Módulo core para Google Earth Engine
-│   └── macfpo_batch_exporter.js    # Script de exportación masiva en GEE
+│   ├── macfpo_batch_exporter.js    # Script de exportación masiva en GEE
+│   └── macfpo_interactive_viewer.js # Visor interactivo en Code Editor
 ├── scripts_python/
-│   ├── raster_processor.py         # Motor de reclasificación por bloques
-│   ├── calculate_total_carbon.py   # Balance global de carbono en Tg C
-│   └── validate_pipeline.py        # Validador de consistencia de datos
-├── tests/
-│   ├── test_config.py              # Pruebas unitarias de coeficientes
-│   └── test_raster_processor.py    # Pruebas unitarias del motor ráster
-├── .gitignore                      # Reglas de exclusión de binarios GIS
+│   └── raster_processor.py         # Motor de reclasificación por bloques
+├── .gitignore                      # Reglas de exclusión del repositorio
+├── LICENSE                         # Licencia del proyecto
+├── README.md                       # Documentación principal del proyecto
 ├── environment.yml                 # Entorno Conda para desarrollo
-├── requirements.txt                # Dependencias Pip para servidores/CI
-└── README.md                       # Documentación principal del proyecto
+└── requirements.txt                # Dependencias Pip
 
 ```
 
