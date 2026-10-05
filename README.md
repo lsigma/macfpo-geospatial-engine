@@ -124,13 +124,6 @@ python scripts_python/raster_processor.py
 
 ```
 
-Para calcular el balance de biocarbono total ($\text{Tg C}$) en la Faja Petrolífera del Orinoco:
-
-```bash
-python scripts_python/calculate_total_carbon.py
-
-```
-
 ### Opción B: Integración en Google Earth Engine (Nube)
 
 Puedes importar el módulo de cálculo directamente en el **GEE Code Editor**:
