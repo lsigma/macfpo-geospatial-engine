@@ -37,16 +37,16 @@ Donde $\sigma_{\text{total}}$ representa la Desviación Estándar combinada asig
 
 ## 📊 Coeficientes del Modelo y Leyenda MapBiomas (Col. 2.0)
 
-| Código MapBiomas | Cobertura / Uso del Suelo | Stock Carbono Promedio ($\text{Mg C/ha}$) | Incertidumbre ($\pm \sigma$) | Muestras ($n$) | Coef. Variación ($\text{CV \%}$) |
+| Código MapBiomas | Cobertura / Uso del Suelo | Carbono Total Promedio (Mg C/ha) | Desviación Estándar ($\pm\sigma$) | Nº de Estimaciones ($n$) | Coeficiente de Variación $CV$ (%) |
 | :---: | :--- | :---: | :---: | :---: | :---: |
-| **3** | Bosque / Formación Forestal | 331,9 | 143,4 | 7 | 43,2% |
-| **6** | Bosque Inundable / Manglar | 359,3 | 121,2 | 3 | 33,7% |
-| **11** | Herbazal / Arbustal Inundable | 132,3 | 19,82 | 4 | 15,0% |
-| **12** | Sabana / Herbazal | 34,5 | 23,7 | 10 | 68,7% |
-| **13** | Sabana Arbolada | 47,3 | 27,8 | 4 | 58,8% |
-| **15** | Uso Agropecuario / Pastizal | 52,5 | 38,0 | 11 | 72,4% |
-| **23** | Plantación Forestal | 143,7 | 96,1 | 3 | 66,9% |
-| **33** | Cuerpos de Agua / No Vegetal | 0,0 | 0,0 | N/A | 0,0% |
+| **3** | Bosque | 331,9 | 143,4 | 7 | 37,5% |
+| **6** | Bosque inundable | 359,3 | 121,2 | 3 | 24,7% |
+| **11** | Herbazal / Arbustal inundable | 132,3 | 19,82 | 4 | 3,4% |
+| **12** | Sabana / Herbazal | 34,5 | 23,7 | 10 | 6,0% |
+| **13** | Sabana arbolada | 47,3 | 27,8 | 4 | 35,5% |
+| **15** | Uso agropecuario | 52,5 | 38,0 | 11 | 70,3% |
+| **23** | Plantación forestal | 143,7 | 96,1 | 3 | 77,2% |
+| **33** | Cuerpos de agua / No vegetal | 0,0 | 0,0 | N/A | 0,0% |
 
 ---
 
