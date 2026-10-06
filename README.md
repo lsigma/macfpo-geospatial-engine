@@ -61,10 +61,8 @@ macfpo-geospatial-engine/
 │   └── carbon_coefficients.json     # Coeficientes y metadatos del modelo
 ├── data/
 │   ├── rasters/
-│   │   ├── .gitignore               # Exclusión de binarios GeoTIFF locales
-│   │   └── README.md                # Manifiesto y enlaces de descarga de rásteres
-│   └── tables/
-│       └── MACFPO_Serie_Temporal_Estadisticas.csv  # Series temporales consolidadas
+│       ├── .gitignore               # Exclusión de binarios GeoTIFF locales
+│       └── README.md                # Manifiesto y enlaces de descarga de rásteres
 ├── gee/
 │   ├── modules/
 │   │   └── carbon_calculator.js    # Módulo core para Google Earth Engine
