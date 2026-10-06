@@ -129,24 +129,71 @@ python scripts_python/raster_processor.py
 Puedes importar el módulo de cálculo directamente en el **GEE Code Editor**:
 
 ```javascript
-// 1. Importar el módulo MACFPO desde el repositorio oficial
-var carbonCalc = require('users/lsigma_usb/macfpo:modules/carbon_calculator.js');
+/**
+ * ============================================================================
+ * PIPELINE DE VISUALIZACIÓN Y CÁLCULO DE BIOCARBONO MACFPO (2022)
+ * Laboratorio LSIGMA - Universidad Simón Bolívar
+ * ============================================================================
+ */
 
-// 2. Cargar el Asset oficial de MapBiomas Venezuela (Colección 3)
+// 1. Matriz de Coeficientes del Modelo MACFPO
+var config = {
+  fromCodes:   [3,     6,     11,    12,   13,   15,   23,    33],
+  carbonMeans: [331.9, 359.3, 132.3, 34.5, 47.3, 52.5, 143.7, 0.0],
+  carbonSDs:   [143.4, 121.2, 19.82, 23.7, 27.8, 38.0, 96.1,  0.0]
+};
+
+// 2. Función Core de Reclasificación (Simula el módulo externo)
+function classifyCarbonAll(mapbiomasImage) {
+  var stock = mapbiomasImage.remap({
+    from: config.fromCodes,
+    to: config.carbonMeans
+  }).rename('carbon_stock');
+
+  var sd = mapbiomasImage.remap({
+    from: config.fromCodes,
+    to: config.carbonSDs
+  }).rename('carbon_sd');
+
+  var combined = ee.Image.cat([stock, sd])
+    .cast({'carbon_stock': 'float', 'carbon_sd': 'float'});
+
+  return ee.Image(combined.copyProperties(mapbiomasImage, ['system:time_start', 'year']));
+}
+
+// 3. Cargar el Asset oficial de MapBiomas Venezuela (Colección 3)
 var mapbiomasRaisg = ee.Image("projects/mapbiomas-public/assets/venezuela/lulc/collection3/mapbiomas_venezuela_collection3_coverage_v1");
 
-// 3. Extraer la banda de clasificación para el año de interés (ej. 2022)
+// 4. Extraer la banda de clasificación para el año de interés (2022)
 var mapbiomas2022 = mapbiomasRaisg.select('classification_2022').rename('classification');
 
-// 4. Generar imagen multibanda reclasificada: ['carbon_stock', 'carbon_sd']
-var macfpoResult = carbonCalc.classifyCarbonAll(mapbiomas2022);
+// 5. Generar la imagen multibanda reclasificada ['carbon_stock', 'carbon_sd']
+var macfpoResult = classifyCarbonAll(mapbiomas2022);
 
-// 5. Visualización interactiva en el mapa
-Map.setCenter(-63.5, 8.5, 7); // Centrado en la Faja Petrolífera del Orinoco
+// 6. Visualización interactiva en el mapa
+Map.setCenter(-63.5, 8.5, 7); // Centrado en la Faja Petrolífera del Orinoco (FPO)
+
+// Capa de Stock de Carbono
 Map.addLayer(
   macfpoResult.select('carbon_stock'), 
-  {min: 0, max: 360, palette: ['#ffffcc','#a1dab4','#41b6c4','#2c7fb8','#253494']}, 
+  {
+    min: 0, 
+    max: 360, 
+    palette: ['#ffffcc', '#a1dab4', '#41b6c4', '#2c7fb8', '#253494']
+  }, 
   'Stock Carbono 2022 (Mg C/ha)'
+);
+
+// Capa de Incertidumbre (Desviación Estándar)
+Map.addLayer(
+  macfpoResult.select('carbon_sd'), 
+  {
+    min: 0, 
+    max: 150, 
+    palette: ['#f7fcf5', '#74c476', '#00441b']
+  }, 
+  'Incertidumbre SD 2022 (Mg C/ha)',
+  false // Desactivada por defecto
 );
 
 ```
