@@ -206,8 +206,8 @@ Los productos ráster generados a $30\text{ m}$ de resolución espacial están a
 
 | Producto Ráster | Año | CRS / Proyección | Tamaño de Píxel | Enlace de Descarga |
 | :--- | :---: | :---: | :---: | :---: |
-| **MACFPO - Stock de Carbono** | 2010 | EPSG:4326 (WGS84) | $0.000269^\circ \ (\approx 30\text{ m})$ | [<img src="https://img.shields.io/badge/Google_Drive-Descargar-4285F4?style=for-the-badge&logo=googledrive&logoColor=white"/>](https://drive.google.com/uc?export=download&id=1ZHDqCDlJxeWaNJY8d9xS2H-GkezURWyE) |
-| **MACFPO - Desviación Estándar** | 2010 | EPSG:4326 (WGS84) | $0.000269^\circ \ (\approx 30\text{ m})$ | [<img src="https://img.shields.io/badge/Google_Drive-Descargar-4285F4?style=for-the-badge&logo=googledrive&logoColor=white"/>](https://drive.google.com/uc?export=download&id=13IPwOZIJB1Qoq-PvOImqi86gFm8a5vXS) |
+| **MACFPO - Stock de Carbono** | 2023 | EPSG:4326 (WGS84) | $0.000269^\circ \ (\approx 30\text{ m})$ | [<img src="https://img.shields.io/badge/Google_Drive-Descargar-4285F4?style=for-the-badge&logo=googledrive&logoColor=white"/>](https://drive.google.com/uc?export=download&id=1ZHDqCDlJxeWaNJY8d9xS2H-GkezURWyE) |
+| **MACFPO - Desviación Estándar** | 2023 | EPSG:4326 (WGS84) | $0.000269^\circ \ (\approx 30\text{ m})$ | [<img src="https://img.shields.io/badge/Google_Drive-Descargar-4285F4?style=for-the-badge&logo=googledrive&logoColor=white"/>](https://drive.google.com/uc?export=download&id=13IPwOZIJB1Qoq-PvOImqi86gFm8a5vXS) |
 
 ---
 
