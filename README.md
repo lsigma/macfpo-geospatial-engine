@@ -198,8 +198,6 @@ Map.addLayer(
 
 ```
 
----
-
 ## 📦 Descarga de Productos Ráster (GeoTIFF)
 
 Los productos ráster generados a $30\text{ m}$ de resolución espacial están alojados en almacenamiento remoto seguro con soporte de descarga directa:
