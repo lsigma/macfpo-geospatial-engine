@@ -16,7 +16,7 @@ var ImageMacfpoSD = ee.Image('projects/lsigma2025/assets/MACFPO_SD');
 var ImageBiomass = ee.Image('projects/ee-lauraugas/assets/Biomass_carb');
 
 // Año por defecto para la visualización inicial en el visor (1985-2023)
-var yearVisua = 2010;
+var yearVisua = 2023;
 
 // Paleta cromática compartida (8 niveles perceptualmente graduados)
 var sharedPalette = ['0D118B', '21438B', '1F84A4', '3CBF97', '45B96F', '67F034', 'BFF266', 'FFFF95'];
