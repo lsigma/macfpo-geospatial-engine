@@ -25,24 +25,24 @@ El almacenamiento total de carbono por unidad de superficie ($\text{Mg C/ha}$) e
 
 $$C_{\text{total}} = C_{\text{biomasa aérea}} + C_{\text{biomasa subterránea}} + C_{\text{suelo (COS)}}$$
 
-### Evaluacion e Incertidumbre Espacial
+### Evaluación e Incertidumbre Espacial
 
-Para cuantificar la variabilidad y el margen de error espacializado asociado a las estimaciones de almacenamiento de carbono total ($C_{\text{total}}$) en los ecosistemas de la FPO, el modelo aplica el calculo de la **desviacion estandar muestral ($s$)** sobre las observaciones bibliograficas compiladas para cada tipo de cobertura vegetal y uso de la tierra:
+Para cuantificar la variabilidad y el margen de error espacializado asociado a las estimaciones de almacenamiento de carbono total ($C_{\text{total}}$) en los ecosistemas de la FPO, el modelo aplica el cálculo de la **desviación estándar muestral ($s$)** sobre las observaciones bibliográficas compiladas para cada tipo de cobertura vegetal y uso de la tierra:
 
 $$s = \sqrt{\frac{\sum_{i=1}^{n} (x_i - \bar{x})^2}{n - 1}}$$
 
-Expresado de forma espacialmente explicita para cada clase de cobertura $k$ de MapBiomas Venezuela (Coleccion 2.0):
+Expresado de forma espacialmente explícita para cada clase de cobertura $k$ de MapBiomas Venezuela (Colección 2.0):
 
 $$s_k = \sqrt{\frac{\sum_{i=1}^{n_k} (x_{i,k} - \bar{x}_k)^2}{n_k - 1}}$$
 
 Donde:
-* **$s_k$**: Desviacion estandar muestral ($\text{Mg C/ha}$) asignada a la clase de cobertura $k$. Este valor conforma la intensidad de cada pixel en el GeoTIFF de incertidumbre espacial del modelo MACFPO.
-* **$x_{i,k}$**: $i$-esima estimacion bibliografica del Carbono Total ($C_{\text{biomasa aerea + subterranica}} + C_{\text{COS}}$, expresado en $\text{Mg C/ha}$) compilada para la clase de cobertura $k$.
-* **$\bar{x}_k$**: Carbono Total promedio ($\text{Mg C/ha}$) calculado para la clase de cobertura $k$.
-* **$n_k$**: Numero total de observaciones o sitios de muestreo compilados para la clase $k$ ($n_k \ge 3$).
-* **$n_k - 1$**: Correccion de Bessel para garantizar un estimador insesgado de la varianza poblacional en muestras finitas.
+- **$s_k$**: Desviación estándar muestral ($\text{Mg C/ha}$) asignada a la clase de cobertura $k$. Este valor conforma la intensidad de cada píxel en el GeoTIFF de incertidumbre espacial del modelo MACFPO.
+- **$x_{i,k}$**: $i$-ésima estimación bibliográfica del Carbono Total ($C_{\text{biomasa aérea + subterránea}} + C_{\text{COS}}$, expresado en $\text{Mg C/ha}$) compilada para la clase de cobertura $k$.
+- **$\bar{x}_k$**: Carbono Total promedio ($\text{Mg C/ha}$) calculado para la clase de cobertura $k$.
+- **$n_k$**: Número total de observaciones o sitios de muestreo compilados para la clase $k$ ($n_k \ge 3$).
+- **$n_k - 1$**: Corrección de Bessel para garantizar un estimador insesgado de la varianza poblacional en muestras finitas.
 
-La matriz espacial de incertidumbre se genera mediante la reasignacion categorica (Look-Up Table / `remap`) de $s_k$ sobre cada pixel de la serie temporal de mapas de cobertura, permitiendo identificar espacialmente las unidades con mayor dispersion o sesgo potencial de muestreo.
+La matriz espacial de incertidumbre se genera mediante la reasignación categórica (Look-Up Table / `remap`) de $s_k$ sobre cada píxel de la serie temporal de mapas de cobertura, permitiendo identificar espacialmente las unidades con mayor dispersión o sesgo potencial de muestreo.
 
 ---
 
