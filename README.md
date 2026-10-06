@@ -25,13 +25,24 @@ El almacenamiento total de carbono por unidad de superficie ($\text{Mg C/ha}$) e
 
 $$C_{\text{total}} = C_{\text{biomasa aérea}} + C_{\text{biomasa subterránea}} + C_{\text{suelo (COS)}}$$
 
-### Modelado de Propagación de Incertidumbre
+### Evaluacion e Incertidumbre Espacial
 
-Para cuantificar el margen de error espacializado asociado a la variabilidad edáfica y vegetal, el modelo aplica propagación de incertidumbre mediante varianza combinada en cuadratura:
+Para cuantificar la variabilidad y el margen de error espacializado asociado a las estimaciones de almacenamiento de carbono total ($C_{\text{total}}$) en los ecosistemas de la FPO, el modelo aplica el calculo de la **desviacion estandar muestral ($s$)** sobre las observaciones bibliograficas compiladas para cada tipo de cobertura vegetal y uso de la tierra:
 
-$$\sigma_{\text{total}} = \sqrt{\sigma_{\text{biomasa}}^2 + \sigma_{\text{COS}}^2}$$
+$$s = \sqrt{\frac{\sum_{i=1}^{n} (x_i - \bar{x})^2}{n - 1}}$$
 
-Donde $\sigma_{\text{total}}$ representa la Desviación Estándar combinada asignada a cada píxel en el GeoTIFF de incertidumbre.
+Expresado de forma espacialmente explicita para cada clase de cobertura $k$ de MapBiomas Venezuela (Coleccion 2.0):
+
+$$s_k = \sqrt{\frac{\sum_{i=1}^{n_k} (x_{i,k} - \bar{x}_k)^2}{n_k - 1}}$$
+
+Donde:
+* **$s_k$**: Desviacion estandar muestral ($\text{Mg C/ha}$) asignada a la clase de cobertura $k$. Este valor conforma la intensidad de cada pixel en el GeoTIFF de incertidumbre espacial del modelo MACFPO.
+* **$x_{i,k}$**: $i$-esima estimacion bibliografica del Carbono Total ($C_{\text{biomasa aerea + subterranica}} + C_{\text{COS}}$, expresado en $\text{Mg C/ha}$) compilada para la clase de cobertura $k$.
+* **$\bar{x}_k$**: Carbono Total promedio ($\text{Mg C/ha}$) calculado para la clase de cobertura $k$.
+* **$n_k$**: Numero total de observaciones o sitios de muestreo compilados para la clase $k$ ($n_k \ge 3$).
+* **$n_k - 1$**: Correccion de Bessel para garantizar un estimador insesgado de la varianza poblacional en muestras finitas.
+
+La matriz espacial de incertidumbre se genera mediante la reasignacion categorica (Look-Up Table / `remap`) de $s_k$ sobre cada pixel de la serie temporal de mapas de cobertura, permitiendo identificar espacialmente las unidades con mayor dispersion o sesgo potencial de muestreo.
 
 ---
 
