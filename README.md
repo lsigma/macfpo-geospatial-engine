@@ -141,21 +141,34 @@ var config = {
   carbonSDs:   [143.4, 121.2, 19.82, 23.7, 27.8, 38.0, 96.1,  0.0]
 };
 
-// 2. Función Core de Reclasificación (Simula el módulo externo)
+/**
+ * Reclasifica una imagen de cobertura a biocarbono resolviendo vacíos de información.
+ * 
+ * @param {ee.Image} mapbiomasImage Imagen de cobertura (ej. classification_2022)
+ * @returns {ee.Image} Imagen multibanda ['carbon_stock', 'carbon_sd']
+ */
 function classifyCarbonAll(mapbiomasImage) {
+  // Retener la máscara geográfica nativa del territorio venezolano
+  var geographicMask = mapbiomasImage.mask();
+
+  // Reclasificación a Stock (defaultValue = 0.0 asigna 0 a minería, urbano, etc.)
   var stock = mapbiomasImage.remap({
     from: config.fromCodes,
-    to: config.carbonMeans
-  }).rename('carbon_stock');
+    to: config.carbonMeans,
+    defaultValue: 0.0
+  }).rename('carbon_stock').float();
 
+  // Reclasificación a Incertidumbre (SD)
   var sd = mapbiomasImage.remap({
     from: config.fromCodes,
-    to: config.carbonSDs
-  }).rename('carbon_sd');
+    to: config.carbonSDs,
+    defaultValue: 0.0
+  }).rename('carbon_sd').float();
 
-  var combined = ee.Image.cat([stock, sd])
-    .cast({'carbon_stock': 'float', 'carbon_sd': 'float'});
+  // Empaquetado multibanda y reaplicación de la máscara geográfica original
+  var combined = ee.Image.cat([stock, sd]).updateMask(geographicMask);
 
+  // Blindaje contra la degradación de tipos (Type Erasure)
   return ee.Image(combined.copyProperties(mapbiomasImage, ['system:time_start', 'year']));
 }
 
@@ -163,13 +176,16 @@ function classifyCarbonAll(mapbiomasImage) {
 var mapbiomasRaisg = ee.Image("projects/mapbiomas-public/assets/venezuela/lulc/collection3/mapbiomas_venezuela_collection3_coverage_v1");
 
 // 4. Extraer la banda de clasificación para el año de interés (2022)
-var mapbiomas2022 = mapbiomasRaisg.select('classification_2022').rename('classification');
+var mapbiomas2022 = mapbiomasRaisg.select('classification_2022');
 
 // 5. Generar la imagen multibanda reclasificada ['carbon_stock', 'carbon_sd']
 var macfpoResult = classifyCarbonAll(mapbiomas2022);
 
 // 6. Visualización interactiva en el mapa
 Map.setCenter(-63.5, 8.5, 7); // Centrado en la Faja Petrolífera del Orinoco (FPO)
+
+// Capa de Cobertura Original (útil para inspección visual directa)
+Map.addLayer(mapbiomas2022, {}, 'MapBiomas Cobertura Original 2022', false);
 
 // Capa de Stock de Carbono
 Map.addLayer(
